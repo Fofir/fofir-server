@@ -72,22 +72,22 @@ export async function createServer(): Promise<Hapi.Server> {
     server.decorate("request", "sendRollbarMessage", () => {});
   }
 
-  await server.register({
-    plugin: HapiCron,
-    options: {
-      jobs: [
-        {
-          name: "testcron",
-          time: "*/10 * * * *", // At every 10th minute
-          timezone: "Europe/London",
-          request: {
-            method: "POST",
-            url: "/jobs/example",
-          },
-        },
-      ],
-    },
-  });
+  // await server.register({
+  //   plugin: HapiCron,
+  //   options: {
+  //     jobs: [
+  //       {
+  //         name: "testcron",
+  //         time: "*/10 * * * *", // At every 10th minute
+  //         timezone: "Europe/London",
+  //         request: {
+  //           method: "POST",
+  //           url: "/jobs/example",
+  //         },
+  //       },
+  //     ],
+  //   },
+  // });
 
   await server.register([
     { plugin: hapiCookie },
