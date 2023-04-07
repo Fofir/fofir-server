@@ -18,3 +18,20 @@ model User {
   @@unique([username])
   @@map("users")
 }
+
+model StandardizedListing {
+  id         Int    @id @default(autoincrement())
+  listingId  String @map("listing_id")
+  provider   String
+  name       String
+  pricePerM2 Int    @map("price_per_m2")
+  price      Int
+  sizeM2     Int    @map("size_m2")
+  url        String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([listingId])
+  @@map("standardized_listing")
+}

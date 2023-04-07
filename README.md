@@ -1,4 +1,4 @@
-# remi
+# fofir-server
 
 A Web service for the various fofir experiments
 
