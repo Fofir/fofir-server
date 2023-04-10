@@ -6,6 +6,7 @@ import config, { nodeEnv } from "../config";
 import servicesPlugin from "../src/plugins/services";
 import path from "path";
 import authPlugin from "../src/plugins/auth";
+import jobsApi from "../src/api/jobs";
 import authApi from "../src/api/auth";
 import HapiCron from "hapi-cron";
 import { Server as SocketServer } from "socket.io";
@@ -72,22 +73,22 @@ export async function createServer(): Promise<Hapi.Server> {
     server.decorate("request", "sendRollbarMessage", () => {});
   }
 
-  // await server.register({
-  //   plugin: HapiCron,
-  //   options: {
-  //     jobs: [
-  //       {
-  //         name: "testcron",
-  //         time: "*/10 * * * *", // At every 10th minute
-  //         timezone: "Europe/London",
-  //         request: {
-  //           method: "POST",
-  //           url: "/jobs/example",
-  //         },
-  //       },
-  //     ],
-  //   },
-  // });
+  await server.register({
+    plugin: HapiCron,
+    options: {
+      jobs: [
+        {
+          name: "nadlan-all",
+          time: "0 10 * * *", // Every day at 10am
+          timezone: "Europe/Athens",
+          request: {
+            method: "POST",
+            url: "/jobs/nadlan/all",
+          },
+        },
+      ],
+    },
+  });
 
   await server.register([
     { plugin: hapiCookie },
@@ -112,6 +113,9 @@ export async function createServer(): Promise<Hapi.Server> {
     },
     {
       plugin: authApi,
+    },
+    {
+      plugin: jobsApi,
     },
   ]);
 

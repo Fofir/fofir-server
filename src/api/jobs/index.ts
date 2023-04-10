@@ -1,15 +1,15 @@
 import Hapi from "@hapi/hapi";
-import { example } from "./handlers";
+import { nadlanAll } from "./handlers";
 
 const register = async function (server: Hapi.Server) {
   server.route([
     {
       method: "POST",
-      path: "/jobs/example",
+      path: "/jobs/nadlan/all",
       options: {
         auth: false,
         tags: ["api", "jobs"],
-        handler: example,
+        handler: nadlanAll,
       },
     },
   ]);
