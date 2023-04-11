@@ -39,22 +39,24 @@ const getForPage = async (page = 1) => {
     });
 
     const url = $(b).attr("href");
-
     const sizeNumber = size ? parseInt(size, 10) : NaN;
-    const data = {
-      listingId: "",
-      name: matchedTitle,
-      pricePerM2: priceNumber / sizeNumber,
-      price: priceNumber,
-      sizeM2: sizeNumber,
-      url: url ? url.replace("/", "") : "",
-      provider: "ELIZABETH",
-    };
+    const listingId = url ? new URL(url).searchParams.get("id") : "";
+    if (listingId) {
+      const data = {
+        listingId,
+        name: matchedTitle,
+        pricePerM2: priceNumber / sizeNumber,
+        price: priceNumber,
+        sizeM2: sizeNumber,
+        url: url ? url.replace("/", "") : "",
+        provider: "ELIZABETH",
+      };
 
-    if (isNaN(sizeNumber)) {
-      console.error("NaN Size");
-    } else {
-      results.push(data);
+      if (isNaN(sizeNumber)) {
+        console.error("NaN Size");
+      } else {
+        results.push(data);
+      }
     }
   });
 
