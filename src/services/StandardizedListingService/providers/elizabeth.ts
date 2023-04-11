@@ -63,6 +63,8 @@ const getForPage = async (page = 1) => {
 
       if (isNaN(sizeNumber)) {
         console.error("NaN Size");
+      } else if (sizeNumber < 10) {
+        console.error("size < 10");
       } else {
         results.push(data);
       }
