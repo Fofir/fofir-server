@@ -21,3 +21,26 @@ export const nadlanAll = async (request: IRequest) => {
     throw err;
   }
 };
+
+export const madlanSingleProvider = async (request: IRequest) => {
+  const {
+    params: { provider },
+    server: {
+      plugins: {
+        services: { standardizedListing },
+      },
+    },
+  } = request;
+
+  try {
+    await standardizedListing.getFromProvider(provider);
+    return { success: true };
+  } catch (err) {
+    console.error(err);
+    if (err instanceof Error) {
+      return { success: false, error: err.message };
+    }
+
+    throw err;
+  }
+};

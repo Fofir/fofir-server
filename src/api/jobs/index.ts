@@ -1,5 +1,5 @@
 import Hapi from "@hapi/hapi";
-import { nadlanAll } from "./handlers";
+import { nadlanAll, madlanSingleProvider } from "./handlers";
 
 const register = async function (server: Hapi.Server) {
   server.route([
@@ -10,6 +10,15 @@ const register = async function (server: Hapi.Server) {
         auth: false,
         tags: ["api", "jobs"],
         handler: nadlanAll,
+      },
+    },
+    {
+      method: "POST",
+      path: "/jobs/nadlan/{provider}",
+      options: {
+        auth: false,
+        tags: ["api", "jobs"],
+        handler: madlanSingleProvider,
       },
     },
   ]);

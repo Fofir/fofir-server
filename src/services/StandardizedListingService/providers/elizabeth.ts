@@ -3,10 +3,15 @@ import axios from "axios";
 import parseCurrency from "parsecurrency";
 import { load } from "cheerio";
 
+const log = (str: string) => {
+  console.log(`==> ELIZABETH: ${str}`);
+};
+
 const LISTINGS_URL =
   "https://www.elizabethestateagency.com/en/akinita/Chania_City/";
 
 const getForPage = async (page = 1) => {
+  log(`Fetching page ${page}`);
   const results: Prisma.StandardizedListingCreateInput[] = [];
   const response = await axios.get(LISTINGS_URL, {
     params: {
@@ -20,6 +25,7 @@ const getForPage = async (page = 1) => {
   const match = totalListingsEl.text().match(/\d+/g);
 
   const totalListingInt = match && match[0] ? parseInt(match[0], 10) : 0;
+  log(`Listing ELs found ${listingEls.length}`);
 
   listingEls.each((index, b) => {
     const matchedTitle = $(b).find(".details_head > h2").text();
@@ -32,11 +38,14 @@ const getForPage = async (page = 1) => {
     matchedMeta.each((i, m) => {
       const matches = $(m)
         .text()
-        .match(/House area: (\d+) m²/);
-      if (matches && matches[1]) {
-        size = matches[1];
+        .match(/(House|Building) area: ([\d,]+) m²/);
+      if (matches && matches[2]) {
+        size = matches[2];
       }
     });
+
+    log(`Listing: ${matchedTitle}`);
+    log(`Size: ${size}`);
 
     const url = $(b).attr("href");
     const sizeNumber = size ? parseInt(size, 10) : NaN;
@@ -69,7 +78,6 @@ const getFromEliazabeth = async () => {
   const totalResults = [firstPageResults];
 
   let pagesToGet = Math.ceil(totalListings / pageSize) + 1;
-
   for (let i = 2; i < pagesToGet; i += 1) {
     const { results: pageReults } = await getForPage(i);
     totalResults.push(pageReults);
