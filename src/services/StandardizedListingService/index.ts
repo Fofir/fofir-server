@@ -3,6 +3,7 @@ import getFromEliazabeth from "./providers/elizabeth";
 import getFromKtimatemporiki from "./providers/ktimatemporiki";
 import getFromMinoas from "./providers/minoas";
 import { randomUUID } from "crypto";
+import getFromRemax from "./providers/remax";
 
 type Getters = Record<
   string,
@@ -26,6 +27,7 @@ class StandardizedListingService {
       getFromEliazabeth(),
       getFromKtimatemporiki(),
       getFromMinoas(),
+      getFromRemax(),
     ]);
 
     await Promise.all(
@@ -51,6 +53,7 @@ class StandardizedListingService {
     elizabeth: getFromEliazabeth,
     ktimatemporiki: getFromKtimatemporiki,
     minoas: getFromMinoas,
+    remax: getFromRemax,
   };
 
   getFromProvider = async (provider: string) => {
