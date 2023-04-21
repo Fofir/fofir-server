@@ -95,4 +95,20 @@ const getFromEliazabeth = async () => {
   };
 };
 
+export const getFromSingleListingPage = async (url: string) => {
+  try {
+    const response = await axios.get(url);
+
+    const $ = load(response.data);
+    const descriptionEl = $("#description");
+
+    return {
+      description: descriptionEl.text(),
+    };
+  } catch (err: any) {
+    console.log(err);
+    return {};
+  }
+};
+
 export default getFromEliazabeth;

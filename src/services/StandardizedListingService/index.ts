@@ -1,5 +1,7 @@
 import { Prisma, PrismaClient } from "@prisma/client";
-import getFromEliazabeth from "./providers/elizabeth";
+import getFromEliazabeth, {
+  getFromSingleListingPage,
+} from "./providers/elizabeth";
 import getFromKtimatemporiki from "./providers/ktimatemporiki";
 import getFromMinoas from "./providers/minoas";
 import { randomUUID } from "crypto";
@@ -14,6 +16,8 @@ type Getters = Record<
     processedListingNum: number;
   }>
 >;
+
+type SingleListingPageGetters = Record<string, (url: string) => Promise<{}>>;
 
 class StandardizedListingService {
   prisma: PrismaClient;
@@ -56,6 +60,10 @@ class StandardizedListingService {
     remax: getFromRemax,
   };
 
+  singleListingGetters: SingleListingPageGetters = {
+    ELIZABETH: getFromSingleListingPage,
+  };
+
   getFromProvider = async (provider: string) => {
     if (!this.getters[provider]) {
       throw new Error("INVALID_PROVIDER");
@@ -75,6 +83,25 @@ class StandardizedListingService {
     return this.prisma.standardizedListing.createMany({
       data,
     });
+  };
+
+  getDetailsForStandardizedListing = async (listingId: string) => {
+    const { url, provider } =
+      await this.prisma.standardizedListing.findFirstOrThrow({
+        where: {
+          listingId,
+        },
+      });
+
+    if (!this.singleListingGetters[provider]) {
+      throw new Error("INVALID_PROVIDER");
+    }
+
+    console.log(url, provider);
+
+    const result = await this.singleListingGetters[provider](url);
+
+    return result;
   };
 }
 

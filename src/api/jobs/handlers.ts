@@ -44,3 +44,20 @@ export const madlanSingleProvider = async (request: IRequest) => {
     throw err;
   }
 };
+
+export const madlanSingleListing = async (request: IRequest) => {
+  const {
+    params: { listingId },
+    server: {
+      plugins: {
+        services: { standardizedListing },
+      },
+    },
+  } = request;
+
+  const result = await standardizedListing.getDetailsForStandardizedListing(
+    listingId
+  );
+
+  return result;
+};
