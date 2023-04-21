@@ -5,6 +5,12 @@ import parseCurrency from "parsecurrency";
 
 const LISTINGS_URL = "https://minoasestate.com/listings";
 
+const PROVIDER = "MINOAS";
+
+const log = (str: string) => {
+  console.log(`==> ${PROVIDER}: ${str}`);
+};
+
 const getForPage = async (page = 1) => {
   const results: Prisma.StandardizedListingCreateInput[] = [];
   const response = await axios.get(LISTINGS_URL, {
@@ -42,7 +48,7 @@ const getForPage = async (page = 1) => {
       price: priceNumber,
       sizeM2: sizeNumber,
       url: `${baseUrl}${url}?lang=en`,
-      provider: "MINOAS",
+      provider: PROVIDER,
     };
 
     results.push(data);
@@ -55,25 +61,38 @@ const getForPage = async (page = 1) => {
 };
 
 const getFromMinoas = async () => {
-  const { results: firstPageResults, totalListings } = await getForPage(1);
-  const pageSize = firstPageResults.length;
-  const totalResults = [firstPageResults];
+  try {
+    const { results: firstPageResults, totalListings } = await getForPage(1);
+    const pageSize = firstPageResults.length;
+    const totalResults = [firstPageResults];
 
-  let pagesToGet = Math.ceil(totalListings / pageSize) + 1;
+    let pagesToGet = Math.ceil(totalListings / pageSize) + 1;
 
-  for (let i = 2; i < pagesToGet; i += 1) {
-    const { results: pageReults } = await getForPage(i);
-    totalResults.push(pageReults);
+    for (let i = 2; i < pagesToGet; i += 1) {
+      const { results: pageReults } = await getForPage(i);
+      totalResults.push(pageReults);
+    }
+
+    const results = totalResults.flat();
+
+    return {
+      results,
+      totalListingsNum: totalListings,
+      processedListingNum: results.length,
+      provider: PROVIDER,
+    };
+  } catch (err) {
+    console.error(err);
+    if (err instanceof Error) {
+      log(err.message);
+    }
+    return {
+      results: [],
+      totalListingsNum: 0,
+      processedListingNum: 0,
+      provider: PROVIDER,
+    };
   }
-
-  const results = totalResults.flat();
-
-  return {
-    results,
-    totalListingsNum: totalListings,
-    processedListingNum: results.length,
-    provider: "MINOAS",
-  };
 };
 
 export default getFromMinoas;
