@@ -73,22 +73,22 @@ export async function createServer(): Promise<Hapi.Server> {
     server.decorate("request", "sendRollbarMessage", () => {});
   }
 
-  await server.register({
-    plugin: HapiCron,
-    options: {
-      jobs: [
-        {
-          name: "nadlan-all",
-          time: "0 10 * * *", // Every day at 10am
-          timezone: "Europe/Athens",
-          request: {
-            method: "POST",
-            url: "/jobs/nadlan/all",
-          },
-        },
-      ],
-    },
-  });
+  // await server.register({
+  //   plugin: HapiCron,
+  //   options: {
+  //     jobs: [
+  //       {
+  //         name: "nadlan-all",
+  //         time: "0 10 * * *", // Every day at 10am
+  //         timezone: "Europe/Athens",
+  //         request: {
+  //           method: "POST",
+  //           url: "/jobs/nadlan/all",
+  //         },
+  //       },
+  //     ],
+  //   },
+  // });
 
   await server.register([
     { plugin: hapiCookie },
